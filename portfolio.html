@@ -10,42 +10,73 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212;
             font-family: Arial, sans-serif;
+            background-color: #121212;
             color: #e0e0e0;
+            min-height: 100vh;
         }
+
         .navbar {
-            position: absolute;
+            position: fixed;
             top: 0;
             width: 100%;
             background-color: #1e1e1e;
             padding: 10px 0;
             text-align: center;
+            z-index: 1000;
         }
+
         .navbar a {
             color: #ffffff;
             text-decoration: none;
             margin: 0 15px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            transition: color 0.2s;
         }
-        .container {
-            text-align: center;
-            padding: 20px;
+
+        .navbar a:hover {
+            color: #ff9800;
         }
+
+        .main {
+            padding-top: 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 30px;
         }
-        p {
-            font-size: 1.2rem;
+
+        .project {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        details summary {
+            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        details[open] summary {
+            color: #ff9800;
+        }
+
+        .project-description {
             margin-top: 10px;
-            color: #b0b0b0;
+            font-size: 1rem;
+            color: #ccc;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -56,9 +87,38 @@
         <a href="article.html">Articles</a>
         <a href="aboutme.html">About Me</a>
     </div>
-    <div class="container">
+
+    <div class="main">
         <h1>Portfolio</h1>
-        <p>Project 1: RustGen</p>
+
+        <div class="project">
+            <details>
+                <summary>RustGen</summary>
+                <div class="project-description">
+                    A procedural generation engine written in Rust, used for terrain creation in indie games. 
+                    Focused on performance and extensibility.
+                </div>
+            </details>
+        </div>
+
+        <div class="project">
+            <details>
+                <summary>AI-Paint</summary>
+                <div class="project-description">
+                    A
+                </div>
+            </details>
+        </div>
+
+        <div class="project">
+            <details>
+                <summary>VoiceAuth</summary>
+                <div class="project-description">
+                    B
+                </div>
+            </details>
+        </div>
+        
     </div>
 </body>
 </html>
