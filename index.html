@@ -3,62 +3,665 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Webpage</title>
+    <title>ASSET // EVALUATION // ONLINE</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --machine-yellow: #f1c40f;
+            --machine-white: #dcdcdc;
+            --machine-red: #e74c3c;
+            --bg-color: #050505;
+            --grid-color: rgba(241, 196, 15, 0.05);
+            --nav-bg: rgba(5, 5, 5, 0.95);
         }
+
+        html { scroll-behavior: smooth; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; border-left: 1px solid rgba(241, 196, 15, 0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--machine-yellow); }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212;
-            font-family: Arial, sans-serif;
-            color: #e0e0e0;
+            cursor: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="18" height="18" stroke="%23f1c40f" stroke-width="2"/><line x1="10" y1="0" x2="10" y2="4" stroke="%23f1c40f" stroke-width="2"/><line x1="10" y1="16" x2="10" y2="20" stroke="%23f1c40f" stroke-width="2"/><line x1="0" y1="10" x2="4" y2="10" stroke="%23f1c40f" stroke-width="2"/><line x1="16" y1="10" x2="20" y2="10" stroke="%23f1c40f" stroke-width="2"/></svg>') 10 10, crosshair;
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--machine-white);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-        .navbar {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            background-color: #1e1e1e;
-            padding: 10px 0;
-            text-align: center;
-        }
-        .navbar a {
-            color: #ffffff;
+
+        a, button {
+            cursor: url('data:image/svg+xml;utf8,<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="12" height="12" fill="%23f1c40f"/></svg>') 7 7, pointer;
+            color: var(--machine-yellow);
             text-decoration: none;
-            margin: 0 15px;
-            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
         }
-        .container {
-            text-align: center;
-            padding: 20px;
+
+        a:hover, button:hover { background: var(--machine-yellow); color: #000; }
+
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 999; pointer-events: none; opacity: 0.4;
         }
-        h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
+
+        #system-nav {
+            position: fixed; top: 0; width: 100%;
+            background: var(--nav-bg);
+            border-bottom: 1px solid rgba(241, 196, 15, 0.3);
+            z-index: 100; padding: 15px 0; text-align: center;
+            display: none;
         }
-        p {
-            font-size: 1.2rem;
-            margin-top: 10px;
-            color: #b0b0b0;
+        #system-nav a { margin: 0 15px; font-size: 1rem; letter-spacing: 1px; padding: 5px 10px; }
+
+        .container { max-width: 900px; margin: 80px auto 40px; padding: 20px; position: relative; z-index: 10; }
+
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 50px; box-sizing: border-box; background: var(--bg-color); z-index: 1000;
         }
+        .boot-line { margin-bottom: 5px; color: var(--machine-white); font-size: 1.2rem; }
+        .blinking-cursor {
+            display: inline-block; width: 10px; height: 1.2rem;
+            background-color: var(--machine-yellow);
+            animation: blink 0.8s step-end infinite; margin-left: 5px;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        #main-content { display: none; animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        section.module { margin-bottom: 60px; scroll-margin-top: 100px; }
+        .target-box {
+            position: relative; padding: 30px; background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 20px;
+        }
+        .corner { position: absolute; width: 15px; height: 15px; border-color: var(--machine-yellow); border-style: solid; }
+        .corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
+        .corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; }
+        .corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; }
+        .corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+
+        h2 {
+            color: var(--machine-yellow); font-size: 1.4rem; text-transform: uppercase;
+            letter-spacing: 2px; margin-top: 0; border-bottom: 1px dashed rgba(241, 196, 15, 0.3);
+            padding-bottom: 10px; margin-bottom: 20px;
+        }
+        
+        .data-row {
+            display: flex; justify-content: space-between; margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 6px; align-items: center;
+        }
+        .label { color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; }
+        .value { color: #fff; text-align: right; }
+        p { margin: 0 0 15px 0; color: var(--machine-white); }
+
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .skill-tag {
+            border: 1px solid rgba(241, 196, 15, 0.5); padding: 8px 10px;
+            text-align: center; font-size: 0.9rem; background: rgba(241, 196, 15, 0.05);
+        }
+        .skill-threat {
+            border-color: rgba(231, 76, 60, 0.5); background: rgba(231, 76, 60, 0.05); color: var(--machine-white);
+        }
+
+        .toggle-btn { font-weight: bold; padding: 2px 8px; margin-left: 10px; flex-shrink: 0; }
+        .btn-red { color: var(--machine-red); border: 1px solid rgba(231, 76, 60, 0.5); }
+        .btn-red:hover { background: var(--machine-red); color: #000; }
+        .btn-yellow { color: var(--machine-yellow); border: 1px solid rgba(241, 196, 15, 0.5); }
+        .btn-yellow:hover { background: var(--machine-yellow); color: #000; }
+
+        .expand-details {
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 15px; margin-top: 0;
+        }
+        .expand-details.expanded { max-height: 2500px; opacity: 1; margin-top: 15px; padding: 15px; }
+        
+        .theme-red { background: rgba(231, 76, 60, 0.05); border-left: 2px solid var(--machine-red); }
+        .theme-yellow { background: rgba(241, 196, 15, 0.02); border-left: 2px solid var(--machine-yellow); }
+
+        .expand-details ul { margin: 0; padding-left: 20px; color: #aaa; font-size: 0.9rem; }
+        .expand-details li { margin-bottom: 8px; }
+
+        .article-card { border-left: 3px solid var(--machine-yellow); padding-left: 15px; margin-bottom: 20px; }
+        .article-card .date { font-size: 0.8rem; color: var(--machine-yellow); margin-bottom: 5px; display: block; }
+
+        #data-stream {
+            position: fixed; top: 0; right: 10px; width: 180px; height: 100vh;
+            overflow: hidden; font-size: 0.7rem; color: rgba(255, 255, 255, 0.1);
+            text-align: right; z-index: 1; pointer-events: none;
+        }
+
+        .project-title-area { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .project-name { color: var(--machine-red); font-weight: bold; }
+        .project-date { color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-right: 15px; }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="#">Home</a>
-        <a href="portfolio.html">Portfolio</a>
-        <a href="article.html">Articles</a>
-        <a href="aboutme.html">About Me</a>
+
+    <div class="scanlines"></div>
+    <div id="data-stream"></div>
+
+    <nav id="system-nav">
+        <a href="#home">[ HOME ]</a>
+        <a href="#about">[ ABOUT ]</a>
+        <a href="#projects">[ PROJECTS ]</a>
+        <a href="#articles">[ ARTICLES ]</a>
+        <a href="#contact">[ CONTACT ]</a>
+    </nav>
+
+    <div id="boot-screen">
+        <div id="boot-text-container"></div>
+        <div><span class="blinking-cursor" id="boot-cursor"></span></div>
     </div>
-    <div class="container">
-        <h1>Hey, I'm Vedant</h1>
-        <p>I'm a software developer from India with an interest in Artificial Intelligence and Machine Learning. This is my website.</p>
+
+    <div class="container" id="main-content">
+        
+        <section id="home" class="module">
+            <div class="target-box">
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
+                
+                <h2>[ SUBJECT_IDENTIFICATION ]</h2>
+                <div class="data-row">
+                    <span class="label">DESIGNATION:</span>
+                    <span class="value">[Final Year Student at Symbiosis Institute of Technology]</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">ALIAS:</span>
+                    <span class="value" style="color: var(--machine-yellow); font-weight: bold;">[Vedant Shinde]</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">LOCATION:</span>
+                    <span class="value">[Pune] // [India]</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">CURRENT_DIRECTIVE:</span>
+                    <span class="value">[Aspiring to be a Programmer in the Field of Scientific Computing]</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="module">
+            <div class="target-box">
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
+                
+                <h2>[ BACKGROUND_INTEL ]</h2>
+                <p>These are skills and tools i've dabbled in some of the projects I've done. They aren't skills I'm completely profficient in  [although I have worked on them atleast once] but I would like to expand my experience with them.</p>
+                
+                <h3 style="color: rgba(255,255,255,0.5); font-size: 1rem; margin-top: 30px; margin-bottom: 15px;">CAPABILITIES:</h3>
+
+                <div style="margin-bottom: 15px;">
+                    <div class="data-row" style="border-bottom: none; margin-bottom: 5px; padding-bottom: 0;">
+                        <span class="label" style="color: var(--machine-yellow); font-size: 0.85rem; letter-spacing: 1px;">>> LANGUAGES_&_TOOLS</span>
+                        <button class="toggle-btn btn-yellow" aria-expanded="false" aria-controls="skills_01">[+] DECRYPT</button>
+                    </div>
+                    <div id="skills_01" class="expand-details theme-yellow">
+                        <div class="skills-grid">
+                            <div class="skill-tag">[ Python, Rust, C++17, CUDA, Shell/Bash ]</div>
+                            <div class="skill-tag">[ PyTorch, Transformers, YOLOv8, OpenCV ]</div>
+                            <div class="skill-tag">[ FastAPI, GraphQL ]</div>
+                            <div class="skill-tag">[ ESP32, TinyML ]</div>
+                            <div class="skill-tag">[ AWS (EC2, S3, DynamoDB), Terraform ]</div>
+                            <div class="skill-tag">[ GDAL, SNAP, MuJoCo, Gymnasium ]</div>
+                            <div class="skill-tag">[ Qt5, libfreenect ]</div>
+                            <div class="skill-tag">[ SQLite, FAISS ]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div class="data-row" style="border-bottom: none; margin-bottom: 5px; padding-bottom: 0;">
+                        <span class="label" style="color: var(--machine-yellow); font-size: 0.85rem; letter-spacing: 1px;">>> AI_ML_&_SYSTEMS</span>
+                        <button class="toggle-btn btn-yellow" aria-expanded="false" aria-controls="skills_02">[+] DECRYPT</button>
+                    </div>
+                    <div id="skills_02" class="expand-details theme-yellow">
+                        <div class="skills-grid">
+                            <div class="skill-tag skill-threat">[ LLM Fine-Tuning & Distillation (CasCoD, CoT) ]</div>
+                            <div class="skill-tag skill-threat">[ Reinforcement Learning (TD-MPC2, PPO, MPPI, MBRL) ]</div>
+                            <div class="skill-tag">[ Gaussian Splatting & 3D Reconstruction (SfM, SLAM, ICP) ]</div>
+                            <div class="skill-tag">[ Generative Models (CycleGAN, SAM) ]</div>
+                            <div class="skill-tag">[ Sensor Fusion (GPS, IMU, Kalman Filters) ]</div>
+                            <div class="skill-tag">[ Knowledge Graphs & NLP Pipelines ]</div>
+                            <div class="skill-tag">[ Monte Carlo Simulation ]</div>
+                            <div class="skill-tag">[ Anomaly Detection (LSTM, Transformer) ]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="data-row" style="border-bottom: none; margin-bottom: 5px; padding-bottom: 0;">
+                        <span class="label" style="color: var(--machine-yellow); font-size: 0.85rem; letter-spacing: 1px;">>> SYSTEMS_&_INFRASTRUCTURE</span>
+                        <button class="toggle-btn btn-yellow" aria-expanded="false" aria-controls="skills_03">[+] DECRYPT</button>
+                    </div>
+                    <div id="skills_03" class="expand-details theme-yellow">
+                        <div class="skills-grid">
+                            <div class="skill-tag">[ Linux Internals (Toolchain, Bootloader, SysVinit) ]</div>
+                            <div class="skill-tag">[ Embedded Systems & Firmware (OpenWrt, LoRa, Meshtastic) ]</div>
+                            <div class="skill-tag">[ GPU Programming (CUDA, TSDF, Marching Cubes) ]</div>
+                            <div class="skill-tag">[ Cloud Infrastructure (AWS, Terraform) ]</div>
+                            <div class="skill-tag">[ Real-Time Systems & Multi-Threading ]</div>
+                            <div class="skill-tag">[ 3D Pipeline Export (GLB/glTF, Blender, Unity) ]</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="projects" class="module">
+            <div class="target-box" style="border-color: rgba(231, 76, 60, 0.3);">
+                <div class="corner tl" style="border-color: var(--machine-red);"></div>
+                <div class="corner tr" style="border-color: var(--machine-red);"></div>
+                <div class="corner bl" style="border-color: var(--machine-red);"></div>
+                <div class="corner br" style="border-color: var(--machine-red);"></div>
+                
+                <h2 style="color: var(--machine-red); border-bottom-color: rgba(231, 76, 60, 0.3);">[ RECENT_PROJECTS ]</h2>
+                <p>Here are projects I've done in recent years, a few specific details [precise github repositories] will be added soon :) ]</p>
+                
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_01: <span class="project-name">Drone-Driven On-Device Gaussian Splatting</span></span>
+                            <div>
+                                <span class="project-date">APR 2026</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_01">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Engineered a real-time, on-device 3D reconstruction pipeline using Gaussian Splatting and multi-modal sensor fusion built in Rust.</p>
+                    <div id="proj_01" class="expand-details theme-red">
+                        <ul>
+                            <li>Engineered an on-device 3D reconstruction pipeline using Gaussian Splatting and incremental SfM for real-time terrain monitoring on mobile devices.</li>
+                            <li>Reduced end-to-end latency by ~90%, cutting reconstruction time from several hours (cloud-based) to 12-18 minutes locally.</li>
+                            <li>Developed a multi-modal sensor fusion engine (GPS, IMU, gimbal) that accelerated RANSAC convergence by 25x (from >5,000 to <200 iterations).</li>
+                            <li>Built a custom sliding-window bundle adjustment library in Rust, achieving sub-0.5m reconstruction accuracy within strict mobile thermal and memory constraints.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_02: <span class="project-name">Efficient Model-Based RL with Structured State-Space World Models</span></span>
+                            <div>
+                                <span class="project-date">APR 2026</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_02">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Evaluated and implemented TD-MPC2 against PPO using latent world models for high-dimensional continuous torque control tasks.</p>
+                    <div id="proj_02" class="expand-details theme-red">
+                        <ul>
+                            <li>Evaluated TD-MPC2 against PPO on DeepMind Control Suite tasks, showing that model-based planning reached rewards 24x higher than model-free baselines within the same training timeframe.</li>
+                            <li>Implemented a latent world model that uses an encoder with SimNorm and an ensemble of 5 Q-functions to handle value estimation and reduce overestimation bias.</li>
+                            <li>Applied MPPI (Model Predictive Path Integral) planning in a 512D latent space to optimize actions for locomotion tasks like Walker-Walk and Cheetah-Run.</li>
+                            <li>Researched compounding errors in MBRL, specifically testing how planning horizons affect performance and setting up infrastructure to test structured dynamics like S4 and Mamba.</li>
+                            <li>Integrated MuJoCo physics with Gymnasium using a custom adapter to process high-dimensional state vectors (up to 24D) for continuous torque control.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_03: <span class="project-name">Linux From Scratch</span></span>
+                            <div>
+                                <span class="project-date">AUG 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_03">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Constructed a fully functional Linux system from source, configuring a custom toolchain, bootloader, and init system by following Gerard Beekmans' book [2025 version].</p>
+                    <div id="proj_03" class="expand-details theme-red">
+                        <ul>
+                            <li>Built a functional Linux system from source code, providing a deep understanding of the boot process, system libraries, and core utilities.</li>
+                            <li>Configured a custom toolchain, GRUB bootloader, and SysVinit to create a tailored operating environment.</li>
+                            <li>Gained experience in resolving compilation errors and managing dependencies at a low level.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_04: <span class="project-name">Asset Development for Game Engines</span></span>
+                            <div>
+                                <span class="project-date">APR 2026</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_04">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Architected a C++17 real-time 3D scanning pipeline utilizing CUDA-accelerated volumetric fusion for 30 FPS mesh generation.</p>
+                    <div id="proj_04" class="expand-details theme-red">
+                        <ul>
+                            <li>Architected a real-time 3D scanning pipeline using a multithreaded C++17 application with libfreenect and Qt5, converting raw Kinect v1 depth streams into textured 3D models at 30 FPS.</li>
+                            <li>Engineered GPU-accelerated volumetric fusion by developing CUDA kernels for TSDF integration and Marching Cubes extraction, achieving sub-2ms mesh generation on a 256³ grid.</li>
+                            <li>Optimized SLAM tracking and memory using multi-resolution point-to-plane ICP for 6-DOF tracking and RAII-based GPU resource management to prevent memory leaks.</li>
+                            <li>Developed game-engine-ready export by integrating a GLB/glTF pipeline with automated coordinate system transformations for compatibility with Blender and Unity.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_05: <span class="project-name">Generating CoTs in SLMs</span></span>
+                            <div>
+                                <span class="project-date">FALL 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_05">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Implemented a two-stage CasCoD distillation pipeline in PyTorch to enhance the autonomous reasoning capabilities of Small Language Models.</p>
+                    <div id="proj_05" class="expand-details theme-red">
+                        <ul>
+                            <li>Implemented CasCoD (Cascading Decomposed CoTs Distillation) to improve the generalizability of reasoning in a smaller language model by decomposing distillation into a two-stage process.</li>
+                            <li>Structured the training process so the model first learned to produce clear reasoning steps on their own, which strengthened its ability to generalize and reduced dependence on direct question-answer cues.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_06: <span class="project-name">Frame and Fabric</span></span>
+                            <div>
+                                <span class="project-date">APR 2026</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_06">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Engineered an end-to-end generative pipeline using CycleGAN and Meta's SAM for real-time interior design style modification.</p>
+                    <div id="proj_06" class="expand-details theme-red">
+                        <ul>
+                            <li>Engineered an end-to-end generative pipeline using CycleGAN for unpaired image-to-image translation, enabling real-time furniture texture and style modification in complex interior scenes.</li>
+                            <li>Integrated Meta’s Segment Anything Model (SAM) and fine-tuned it for accurate segmentation of furniture, walls, and flooring.</li>
+                            <li>Improved model output using a composite loss function combining cycle-consistency, identity, and luminance constraints to preserve structure and lighting.</li>
+                            <li>Enhanced training stability and output quality, reducing generator loss while maintaining balanced discriminator performance.</li>
+                            <li>Evaluated generated images using SSIM, achieving high structural similarity and visual consistency.</li>
+                            <li>Built a high-performance FastAPI backend with optimized GPU memory handling and asynchronous processing.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_07: <span class="project-name">Integrated Maritime Domain Awareness</span></span>
+                            <div>
+                                <span class="project-date">NOV 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_07">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Developed a multi-modal fusion system utilizing YOLOv8 and LSTM models on SAR/AIS data for automated detection of anomalous "dark" vessels.</p>
+                    <div id="proj_07" class="expand-details theme-red">
+                        <ul>
+                            <li>Developed a Multi-Modal Fusion System: Integrated Synthetic Aperture Radar (SAR) imagery with Automatic Identification System (AIS) data to enhance Maritime Domain Awareness, achieving reliable detection and classification of "dark" vessels.</li>
+                            <li>Implemented Advanced Deep Learning Architectures: Leveraged PyTorch and YOLOv8 to build robust ship detection and segmentation models, fine-tuned on specialized datasets like OpenSARShip and SSDD.</li>
+                            <li>Engineered Real-Time Behavioral Analytics: Designed an automated anomaly detection framework using LSTM/Transformer models and rule-based scoring to identify suspicious maritime activities.</li>
+                            <li>Optimized Geospatial Data Pipeline: Built a comprehensive preprocessing and tracking pipeline using SNAP (ESA), GDAL, and Kalman Filters to generate stitched vessel trajectories.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_08: <span class="project-name">RustGen</span></span>
+                            <div>
+                                <span class="project-date">NOV 2024</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_08">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Engineered an LLM-driven automated code synthesis pipeline with a compiler feedback loop to generate memory-safe Rust code.</p>
+                    <div id="proj_08" class="expand-details theme-red">
+                        <ul>
+                            <li>Engineered an automated code synthesis pipeline leveraging IBM Granite and Meta Llama LLMs to facilitate no-code Rust development, reducing initial logical errors and memory safety issues.</li>
+                            <li>Implemented a sophisticated feedback loop integrating a Prompt LLM, Code LLM, and a Rust compiler to iteratively refine generated code, significantly improving success rates.</li>
+                            <li>Developed a custom data ingestion tool using GraphQL to scrape and categorize a diverse dataset of 50 technical challenges for rigorous benchmarking.</li>
+                            <li>Optimized for local deployment by architecting the solution to run efficiently on consumer-grade hardware.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_09: <span class="project-name">Long Range Communication via Meshtastic</span></span>
+                            <div>
+                                <span class="project-date">APR 2026</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_09">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Designed an off-grid decentralized LoRa mesh network running TinyML edge-AI models on ESP32-S3 microcontrollers.</p>
+                    <div id="proj_09" class="expand-details theme-red">
+                        <ul>
+                            <li>Developed a Decentralized LoRa Mesh Network: Engineered an infrastructure-free, long-range communication system using ESP32-S3 microcontrollers and SX1262 LoRa transceivers, leveraging the Meshtastic protocol.</li>
+                            <li>Implemented Edge AI & Sensor Fusion: Integrated Embedded AI (TinyML) on-device to perform real-time GPS geofencing and compass heading anomaly detection, utilizing a complementary filter for sensor fusion.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_10: <span class="project-name">Space Biology Knowledge Engine</span></span>
+                            <div>
+                                <span class="project-date">OCT 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_10">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Built an end-to-end NLP data pipeline extracting semantic knowledge graphs and FAISS vector embeddings from NASA publications.</p>
+                    <div id="proj_10" class="expand-details theme-red">
+                        <ul>
+                            <li>Built an end-to-end AI data processing pipeline to ingest and transform NASA space biology publications into structured datasets, enabling downstream analytics and intelligent applications.</li>
+                            <li>Developed automated workflows for metadata normalization, document parsing, and information extraction, generating structured JSON datasets and a relational database (SQLite).</li>
+                            <li>Designed and implemented a knowledge graph (KG) construction pipeline, extracting entity-relationship triples and exporting them in CSV/TTL formats for semantic reasoning.</li>
+                            <li>Implemented semantic search and multi-level NLP summarization using vector embeddings (FAISS), producing snippet-, section-, and document-level summaries.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_11: <span class="project-name">Porting OpenWrt to TP-Link Archer C6</span></span>
+                            <div>
+                                <span class="project-date">ONGOING</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_11">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Porting, configuring, and debugging custom OpenWrt firmware and kernel extensions on constrained embedded networking hardware.</p>
+                    <div id="proj_11" class="expand-details theme-red">
+                        <ul>
+                            <li>Porting and configuring OpenWrt firmware for the TP-Link Archer C6 V4, enabling advanced networking features and system-level customization.</li>
+                            <li>Debugging bootloader and kernel issues through serial console and recovery modes, improving stability and performance on constrained embedded hardware.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_12: <span class="project-name">LLM-Driven Radiology Reporting</span></span>
+                            <div>
+                                <span class="project-date">APR 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_12">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Developed a hybrid CNN and LLM architecture to automatically diagnose lung pathologies from X-Rays and generate detailed medical reports.</p>
+                    <div id="proj_12" class="expand-details theme-red">
+                        <ul>
+                            <li>Developed an ML-based software to automatically interpret chest X-ray images for three specific lung diseases: Lung Carcinoma, Pneumonia, and Emphysema.</li>
+                            <li>Employed a CNN model to accurately distinguish between affected and healthy X-rays, with a focus on minimizing false negatives.</li>
+                            <li>Integrated an LLM to generate detailed radiology reports and reduce the overall processing time, thereby improving the report turnaround time (RTAT).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div class="data-row">
+                        <div class="project-title-area">
+                            <span class="label">OP_13: <span class="project-name">AWS Monte Carlo Simulations</span></span>
+                            <div>
+                                <span class="project-date">NOV 2025</span>
+                                <button class="toggle-btn btn-red" aria-expanded="false" aria-controls="proj_13">[+] DECRYPT</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem;">Architected a scalable cloud environment via Terraform to run high-performance Monte Carlo simulations utilizing S3 and DynamoDB.</p>
+                    <div id="proj_13" class="expand-details theme-red">
+                        <ul>
+                            <li>Architected and deployed a scalable cloud environment on AWS using Terraform (Infrastructure as Code) [The Terraform part was a proof of concept implementation to get my hands dirty working with Terraform and not a completely robust deployment] to automate the provisioning of EC2 compute instances, S3 storage, and DynamoDB databases.</li>
+                            <li>Engineered a high-performance simulation pipeline utilizing Monte Carlo methods to process complex datasets, leveraging Amazon S3 for persistent result storage and DynamoDB for metadata tracking.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="articles" class="module">
+            <div class="target-box">
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
+                
+                <h2>[ INTEL_LOGS ]</h2>
+                
+                <div class="article-card">
+                    <span class="date">SYS_DATE: [YYYY.MM.DD]</span>
+                    <h3 style="margin: 0 0 5px 0;"><a href="[ARTICLE_LINK_HERE]">[Compiling Linux From Scratch]</a></h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 0;">[Details my experience compiling Linux from Scratch]</p> <!-- need to write a brief description here to be done in the near future-->
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="module">
+            <div class="target-box">
+                <div class="corner tl"></div><div class="corner tr"></div>
+                <div class="corner bl"></div><div class="corner br"></div>
+                
+                <h2>[ ESTABLISH_CONNECTION ]</h2>
+                
+                <div class="data-row" style="margin-top: 20px;">
+                    <span class="label">SECURE_COMMS:</span>
+                    <span class="value"><a href="mailto:[YOUR_EMAIL_ADDRESS]">INITIATE_EMAIL_PROTOCOL</a></span> <!--not an actual email right now-->
+                </div>
+                <div class="data-row">
+                    <span class="label">CODE_REPOSITORY:</span>
+                    <span class="value"><a href="[https://github.com/1vedantshinde]">ACCESS_GITHUB</a></span>
+                </div>
+                <div class="data-row">
+                    <span class="label">PROFESSIONAL_NETWORK:</span>
+                    <span class="value"><a href="[https://www.linkedin.com/in/vedantshinde1/]">VIEW_LINKEDIN_DOSSIER</a></span>
+                </div>
+            </div>
+        </section>
+
     </div>
+
+    <script>
+        const bootContainer = document.getElementById('boot-text-container');
+        const bootScreen = document.getElementById('boot-screen');
+        const mainContent = document.getElementById('main-content');
+        const systemNav = document.getElementById('system-nav');
+
+        const bootSequence = [
+            "INITIALIZING KERNEL...",
+            "LOADING ASSET REGISTRY...",
+            "BYPASSING SECURITY PROTOCOLS... [OK]",
+            "DECRYPTING PROFILE DATA...",
+            "CONNECTION ESTABLISHED."
+        ];
+
+        let lineIndex = 0; let charIndex = 0; let currentLineElement = null;
+
+        function typeWriter() {
+            if (lineIndex < bootSequence.length) {
+                if (charIndex === 0) {
+                    currentLineElement = document.createElement('div');
+                    currentLineElement.className = 'boot-line';
+                    bootContainer.appendChild(currentLineElement);
+                }
+                if (charIndex < bootSequence[lineIndex].length) {
+                    currentLineElement.innerHTML += bootSequence[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 5); 
+                } else {
+                    charIndex = 0; lineIndex++;
+                    setTimeout(typeWriter, 50); 
+                }
+            } else {
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    systemNav.style.display = 'block';
+                    mainContent.style.display = 'block';
+                }, 150);
+            }
+        }
+
+        window.onload = () => {
+            typeWriter();
+            generateDataStream();
+        };
+
+        // --- UNIVERSAL ACCORDION LOGIC ---
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('aria-controls');
+                const targetContent = document.getElementById(targetId);
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                
+                if (isExpanded) {
+                    targetContent.classList.remove('expanded');
+                    this.setAttribute('aria-expanded', 'false');
+                    this.innerHTML = '[+] DECRYPT';
+                } else {
+                    targetContent.classList.add('expanded');
+                    this.setAttribute('aria-expanded', 'true');
+                    this.innerHTML = '[-] ENCRYPT';
+                }
+            });
+        });
+
+        // --- BACKGROUND DATA STREAM ---
+        function generateDataStream() {
+            const streamContainer = document.getElementById('data-stream');
+            setInterval(() => {
+                const randomHash = Math.random().toString(36).substring(2, 10).toUpperCase();
+                const randomMem = Math.floor(Math.random() * 9999);
+                const stringNode = document.createElement('div');
+                stringNode.innerText = `[0x${randomHash}] MEM_${randomMem}`;
+                streamContainer.prepend(stringNode);
+                if (streamContainer.childElementCount > 60) {
+                    streamContainer.removeChild(streamContainer.lastChild);
+                }
+            }, 80);
+        }
+    </script>
 </body>
 </html>
